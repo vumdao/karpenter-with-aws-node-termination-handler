@@ -1,7 +1,7 @@
 import { awscdk } from "projen";
 const project = new awscdk.AwsCdkTypeScriptApp({
-  cdkVersion: "2.1.0",
-  defaultReleaseBranch: "main",
+  cdkVersion: "2.20.0",
+  defaultReleaseBranch: "master",
   name: "karpenter-with-aws-node-termination-handler",
   projenrcTs: true,
 
