@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: aws-node-termination-handler
+    app.kubernetes.io/name: aws-node-termination-handler
+  name: aws-node-termination-handler
+  namespace: kube-system
+  annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/nth-dev-role

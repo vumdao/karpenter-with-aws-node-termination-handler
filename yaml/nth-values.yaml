@@ -1,0 +1,8 @@
+enableSqsTerminationDraining: true
+queueURL: "https://sqs.ap-northeast-2.amazonaws.com/123456789012/nth-dev-sqs"
+awsRegion: "ap-northeast-2"
+serviceAccount:
+  create: false
+  name: aws-node-termination-handler
+checkASGTagBeforeDraining: false # <-- set to false as instances do not belong to any ASG
+enableSpotInterruptionDraining: true

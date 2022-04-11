@@ -1,0 +1,5 @@
+serviceAccount:
+    create: false
+    name: "karpenter-controller"
+clusterName: "eks-dev"
+clusterEndpoint: "https://AAABBBCCCDDDEEEXXXYYY.xy2.ap-northeast-2.eks.amazonaws.com"

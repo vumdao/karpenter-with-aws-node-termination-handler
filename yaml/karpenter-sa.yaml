@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/name: karpenter-controller
+  name: karpenter-controller
+  namespace: karpenter
+  annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/karpenter-controller-dev
