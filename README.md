@@ -67,8 +67,11 @@
     create: false
     name: aws-node-termination-handler
   checkASGTagBeforeDraining: false # <-- set to false as instances do not belong to any ASG
+  assumeAsgTagPropagation: true # <-- mitigate the need of ASG IAM permission
   enableSpotInterruptionDraining: true
   ```
+  </details>
+
 - Install aws-node-termination-handler using helm chart
   ```
   ⚡ $ helm upgrade --install aws-node-termination-handler eks/aws-node-termination-handler -n kube-system --values yaml/nth-values.yaml
@@ -107,11 +110,19 @@
 - Note that NTH is deployed on any nodes without taints even on the spot instance, so for best practice, the NTH deployment should be assigned to stateful node.
 
 ## 🚀 **Check NTH works well** <a name="Check-NTH-works-well"></a>
-- How to know if NTH works well? We can enable `webhookURL` for slack notification when there's spot instance event and go to check if NTH is able to cordon the nodes and karpenter provides new node
-
-  <img src="images/slack-msg.png" width=900>
+- How to know if NTH works well? We can use [EC2 Spot Interruptions - AWS Fault Injection Simulator
+](https://dev.to/aws-builders/ec2-spot-interruptions-aws-fault-injection-simulator-31i2) to send `aws:ec2:send-spot-instance-interruptions` event and go to check if NTH is able to cordon the nodes and karpenter provides new node
 
   <img src="images/sqs-msg.png" width=900>
+
+- NTH logs
+  ```
+  2022/04/11 16:23:33 INF Adding new event to the event store event={"AutoScalingGroupName":"","Description":"Rebalance recommendation event received. Instance i-09165e73a609fbbca will be cordoned at 2022-04-11 16:23:33 +0000 UTC \n","EndTime":"0001-01-01T00:00:00Z","EventID":"rebalance-recommendation-event-33643432376337652d326234632d633063372d313138642d626231323834393963343761","InProgress":false,"InstanceID":"i-09165e73a609fbbca","IsManaged":true,"Kind":"SQS_TERMINATE","NodeLabels":null,"NodeName":"ip-172-10-51-198.ap-northeast-2.compute.internal","NodeProcessed":false,"Pods":null,"StartTime":"2022-04-11T16:23:33Z","State":""}
+  2022/04/11 16:23:34 INF Requesting instance drain event-id=rebalance-recommendation-event-33643432376337652d326234632d633063372d313138642d626231323834393963343761 instance-id=i-09165e73a609fbbca kind=SQS_TERMINATE node-name=ip-172-10-51-198.ap-northeast-2.compute.internal
+  2022/04/11 16:23:34 INF Draining the node
+  2022/04/11 16:23:38 INF Node successfully cordoned and drained node_name=ip-172-10-51-198.ap-northeast-2.compute.internal reason="Spot Interruption event received. Instance i-09165e73a609fbbca will be interrupted at 2022-04-11 16:23:33 +0000 UTC \n"
+  2022/04/11 16:23:38 INF Node successfully cordoned and drained node_name=ip-172-10-51-198.ap-northeast-2.compute.internal reason="Rebalance recommendation event received. Instance i-09165e73a609fbbca will be cordoned at 2022-04-11 16:23:33 +0000 UTC \n"
+  ```
 
   ```
   # kf get node -l karpenter.sh/capacity-type=spot
